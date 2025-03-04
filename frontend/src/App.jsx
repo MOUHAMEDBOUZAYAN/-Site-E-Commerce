@@ -1,13 +1,15 @@
-import React from 'react'
+import React from 'react';
+import ReviewSection from './Components/Comments';
 
-function App() {
-  return (
-    <div>
-      <h1 class="text-5xl font-bold text-red-500 underline">
-    Hello world!
-  </h1>
-    </div>
-  )
-}
+const App = () => {
+    const productId = 'exampleProductId';
 
-export default App
+    return (
+        <div className="container mx-auto p-4">
+            <h1 className="text-3xl font-bold">Comments</h1>
+            <ReviewSection productId={productId} />
+        </div>
+    );
+};
+
+export default App;

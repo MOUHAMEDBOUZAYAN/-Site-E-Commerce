@@ -1,13 +1,13 @@
-import React from 'react'
+import React from 'react';
+import AdminPage from './Components/AdminPage';
 
 function App() {
   return (
     <div>
-      <h1 class="text-5xl font-bold text-red-500 underline">
-    Hello world!
-  </h1>
+      
+      <AdminPage /> 
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

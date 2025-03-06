@@ -3,6 +3,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const userRoutes = require('./routes/users')
 const productRoutes = require('./routes/products')
+const commentRoutes = require('./routes/comments')
 
 const app = express()
 const PORT = 9000
@@ -16,8 +17,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/eco')
 
 app.use("/api/users", userRoutes)
 app.use("/api/products", productRoutes)
+app.use("/api/comments", commentRoutes)
 
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`)
 })
-

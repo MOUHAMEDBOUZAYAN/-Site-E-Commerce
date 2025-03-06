@@ -25,7 +25,7 @@ const Comments = ({ productId, onCommentAdded }) => {
         });
         setMessage('Commentaire ajouté avec succès !');
         resetForm();
-        if (onCommentAdded) onCommentAdded(); // تحديث القائمة بعد الإضافة
+        if (onCommentAdded) onCommentAdded();
       } catch (error) {
         setMessage('Erreur lors de l\'ajout du commentaire. Veuillez réessayer.');
       }

@@ -3,48 +3,48 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 
-const Comments = ({ productId }) => {
+const Comments = ({ productId, onCommentAdded }) => {
   const [message, setMessage] = useState('');
 
   const formik = useFormik({
     initialValues: {
-      rating: '',
+      name: '',
       comment: '',
     },
     validationSchema: Yup.object({
-      rating: Yup.number().min(1).max(5).required('note est obligatoire'),
-      comment: Yup.string().min(1).max(500).required('commentaire est obligatoire'),
+      name: Yup.string().min(1).max(100).required('Le nom est obligatoire'),
+      comment: Yup.string().min(1).max(500).required('Le commentaire est obligatoire'),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values, { resetForm }) => {
       try {
-        const response = await axios.post('http://localhost:5000/api/Comments', {
+        await axios.post('http://localhost:4444/api/Comments', {
           productId,
-          rating: values.rating,
+          name: values.name,
           comment: values.comment,
           userId: 'userIdHere',
         });
-        setMessage('comment avec succès !');
+        setMessage('Commentaire ajouté avec succès !');
+        resetForm();
+        if (onCommentAdded) onCommentAdded(); // تحديث القائمة بعد الإضافة
       } catch (error) {
-        setMessage('Erreur lors de\ comments');
+        setMessage('Erreur lors de l\'ajout du commentaire. Veuillez réessayer.');
       }
     },
   });
 
   return (
-    <div className="p-4 bg-gray-100 rounded">
-      <h2 className="text-lg font-semibold mb-4">Comments</h2>
+    <div className="p-4 bg-[#efcfbd] rounded">
+      <h2 className="text-lg font-semibold mb-4 text-gray-700">Ajouter un Commentaire</h2>
       <form onSubmit={formik.handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Note</label>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nom</label>
           <input
-            id="rating"
-            type="number"
-            min="1"
-            max="5"
-            {...formik.getFieldProps('rating')}
-            className="mt-1 p-2 w-full border border-gray-300 rounded"
+            id="name"
+            type="text"
+            {...formik.getFieldProps('name')}
+            className="mt-1 p-2 w-full border placeholder:text-black placeholder:opacity-50 border-amber-900 rounded"
           />
-          {formik.touched.rating && formik.errors.rating ? <div className="text-red-500 text-sm">{formik.errors.rating}</div> : null}
+          {formik.touched.name && formik.errors.name ? <div className="text-red-600 text-sm">{formik.errors.name}</div> : null}
         </div>
 
         <div className="mb-4">
@@ -52,15 +52,15 @@ const Comments = ({ productId }) => {
           <textarea
             id="comment"
             {...formik.getFieldProps('comment')}
-            className="mt-1 p-2 w-full border border-gray-300 rounded"
+            className="mt-1 p-2 w-full placeholder:text-black placeholder:opacity-50 border border-amber-900 rounded"
           />
-          {formik.touched.comment && formik.errors.comment ? <div className="text-red-500 text-sm">{formik.errors.comment}</div> : null}
+          {formik.touched.comment && formik.errors.comment ? <div className="text-red-600 text-sm">{formik.errors.comment}</div> : null}
         </div>
 
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">Add</button>
+        <button type="submit" className="px-4 py-2 bg-[#815135] text-white rounded">Ajouter</button>
       </form>
 
-      {message && <p className="mt-4 text-center">{message}</p>}
+      {message && <p className="mt-4 text-center text-gray-800 font-medium">{message}</p>}
     </div>
   );
 };

@@ -1,13 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react';
+import Comments from './Components/Comments';
+import ProductReviews from './Components/ProductReviews';
 
-function App() {
-  return (
-    <div>
-      <h1 class="text-5xl font-bold text-red-500 underline">
-    Hello world!
-  </h1>
-    </div>
-  )
-}
+const App = () => {
+    const productId = 'exampleProductId';
+    const [refresh, setRefresh] = useState(false);
 
-export default App
+    const handleCommentAdded = () => {
+        setRefresh(prev => !prev);
+    };
+
+    return (
+        <div className="container mx-auto p-4">
+            <h1 className="text-3xl font-bold">Commentaires</h1>
+            <Comments productId={productId} onCommentAdded={handleCommentAdded} />
+            <ProductReviews productId={productId} refresh={refresh} />
+        </div>
+    );
+};
+
+export default App;

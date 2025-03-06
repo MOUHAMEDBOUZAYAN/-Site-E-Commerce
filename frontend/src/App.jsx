@@ -1,22 +1,13 @@
-import React, { useState } from 'react';
-import Comments from './Components/Comments';
-import ProductReviews from './Components/ProductReviews';
+import React from 'react';
+import AdminPage from './Components/AdminPage';
 
-const App = () => {
-    const productId = 'exampleProductId';
-    const [refresh, setRefresh] = useState(false);
-
-    const handleCommentAdded = () => {
-        setRefresh(prev => !prev);
-    };
-
-    return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold">Commentaires</h1>
-            <Comments productId={productId} onCommentAdded={handleCommentAdded} />
-            <ProductReviews productId={productId} refresh={refresh} />
-        </div>
-    );
-};
+function App() {
+  return (
+    <div>
+      
+      <AdminPage /> 
+    </div>
+  );
+}
 
 export default App;

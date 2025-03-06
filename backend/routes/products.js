@@ -30,4 +30,40 @@ router.get('/:id', async (req, res) => {
       });
     }
   });
+
+  // Ajouter un nouveau produit
+router.post('/', async (req, res) => {
+  try {
+      const { name, price, description, category, stock } = req.body;
+
+      if (!name || !price || !description || !category || stock === undefined) {
+          return res.status(400).json({
+              status: 'error',
+              message: 'Tous les champs sont requis'
+          });
+      }
+
+      const newProduct = new Product({
+          name,
+          price,
+          description,
+          category,
+          stock
+      });
+
+      await newProduct.save();
+
+      res.status(201).json({
+          status: 'success',
+          message: 'Produit ajouté avec succès',
+          data: newProduct
+      });
+  } catch (error) {
+      res.status(500).json({
+          status: 'error',
+          message: "Erreur lors de l'ajout du produit ",
+          error: error.message
+      });
+  }
+});
 module.exports = router;

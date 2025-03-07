@@ -6,10 +6,11 @@ const productRoutes = require('./routes/products')
 const commentRoutes = require('./routes/comments')
 
 const app = express()
-const PORT = 9000
+const PORT = 9000;
 
 app.use(cors());
 app.use(express.json())
+app.use("/uploads", express.static("uploads"));
 
 mongoose.connect('mongodb://127.0.0.1:27017/eco')
 .then(()=>{console.log('MongoDb is Connected')})

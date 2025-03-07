@@ -1,13 +1,9 @@
-import React from 'react';
-import AdminPage from './Components/AdminPage';
-import Navbar from './Components/Navbar';
-import LoginPage from './Components/LoginPage';
+import React from "react";
+import Store from "./pages/Store";
 
 function App() {
   return (
-    <div>
-      <LoginPage /> 
-    </div>
+    <Store />
   );
 }
 

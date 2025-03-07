@@ -1,6 +1,5 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AdminPage from "./Components/AdminPage";
 import Shop from "./Components/Shop";
 import ProductDetail from "./Components/ProductDetail";
 import Nav from "./Components/Nav";
@@ -18,7 +17,6 @@ function Store() {
           <Route path="/home" element={<ShopCategory category="home" />} />
           <Route path="/electronique" element={<ShopCategory category="electronique" />} />
           <Route path="/product/:productId" element={<ProductDetail />} />
-          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </div>
     </Router>

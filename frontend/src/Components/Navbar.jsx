@@ -1,6 +1,6 @@
 import React from 'react'
 import { Profile } from '../icons/Profile'
-import Logo from '../assets/logo.png'
+import Logo from '../assets/site_logo.png'
 
 function Navbar() {
   return (

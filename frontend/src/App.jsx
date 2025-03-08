@@ -1,13 +1,11 @@
 import React from "react";
-import Connect from "./pages/Connect";
-import Navbar from "./Components/Navbar";
+import Store from "./pages/Store";
+import AdminPage from "./Components/AdminPage"
 
 function App() {
   return (
-    <>
-      <Navbar />
-      <Connect />
-    </>
+    // <Store />
+    <AdminPage />
   );
 }
 

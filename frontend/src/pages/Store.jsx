@@ -1,9 +1,9 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Shop from "./Components/Shop";
-import ProductDetail from "./Components/ProductDetail";
-import Nav from "./Components/Nav";
-import ShopCategory from "./Components/ShopCategory";
+import Shop from "../Components/Shop";
+import ProductDetail from "../Components/ProductDetail";
+import Nav from "../Components/Nav";
+import ShopCategory from "../Components/ShopCategory";
 
 function Store() {
   return (

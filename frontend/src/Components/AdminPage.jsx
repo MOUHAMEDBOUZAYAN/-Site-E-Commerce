@@ -40,7 +40,7 @@ const ProductForm = ({ product = null, apiUrl = "http://127.0.0.1:9000/api/produ
             setLoading(true);
 
             // Send POST request to the API
-            const response = await axios.post(apiUrl, formData, {
+            const response = await axios.post("http://127.0.0.1:9000/api/products", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -145,7 +145,7 @@ const ProductForm = ({ product = null, apiUrl = "http://127.0.0.1:9000/api/produ
                 </div>
 
                 <div className="mt-4">
-                    <label className="block text-sm font-medium text-black mb-1">Product Image</label>
+                    <label className="block text-sm font-medium text-black mb-1">Select Image</label>
                     <input
                         type="file"
                         accept="image/*"
@@ -158,7 +158,7 @@ const ProductForm = ({ product = null, apiUrl = "http://127.0.0.1:9000/api/produ
                         onClick={() => document.getElementById('imageInput').click()}
                         className="w-full p-2 bg-[#D5BDAF] text-white font-semibold rounded hover:bg-black"
                     >
-                        {image ? 'Change Image' : 'Choose Image'}
+                        {image ? 'Change Image' : 'Select Image'}
                     </button>
                     {image && (
                         <div className="mt-2 text-sm text-black">

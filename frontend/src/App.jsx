@@ -1,9 +1,13 @@
 import React from "react";
-import Store from "./pages/Store";
+import Connect from "./pages/Connect";
+import Navbar from "./Components/Navbar";
 
 function App() {
   return (
-    <Store />
+    <>
+      <Navbar />
+      <Connect />
+    </>
   );
 }
 

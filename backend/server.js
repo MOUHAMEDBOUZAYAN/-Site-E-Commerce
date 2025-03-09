@@ -12,6 +12,7 @@ const MONGO_URI = process.env.MONGO_URL;
 
 app.use(cors());
 app.use(express.json())
+app.use("/uploads", express.static("uploads"));
 
 mongoose.connect(MONGO_URI)
 .then(()=>{console.log('MongoDb is Connected')})

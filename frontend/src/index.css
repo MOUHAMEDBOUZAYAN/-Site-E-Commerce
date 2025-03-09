@@ -59,3 +59,17 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+input.input-error,
+select.input-error{
+  border-color: rgb(255, 77, 77);
+  outline: none;
+}
+
+.primary-btn{
+  background-color: rgb(0, 157, 255);
+}
+
+.sec-btn{
+  background-color: rgb(255, 132, 65);
+}

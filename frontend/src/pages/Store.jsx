@@ -1,26 +1,25 @@
-import React from 'react'
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Shop from "../Components/Shop";
-import ProductDetail from "../Components/ProductDetail";
-import Nav from "../Components/Nav";
 import ShopCategory from "../Components/ShopCategory";
+import ProductDetail from "../Components/ProductDetail";
+import Comments from "../components/Comments";
+
+
 
 function Store() {
   return (
     <Router>
       <div className="container mx-auto">
-        <Nav />
         <Routes>
           <Route path="/" element={<Shop />} />
-          <Route path="/women" element={<ShopCategory category="women" />} />
-          <Route path="/sport" element={<ShopCategory category="sport" />} />
-          <Route path="/home" element={<ShopCategory category="home" />} />
-          <Route path="/electronique" element={<ShopCategory category="electronique" />} />
+          <Route path="/category/:category" element={<ShopCategory />} />
           <Route path="/product/:productId" element={<ProductDetail />} />
+          <Route path="/comments/:productId" element={<Comments />} />
         </Routes>
       </div>
     </Router>
-  )
+  );
 }
 
-export default Store
+export default Store;

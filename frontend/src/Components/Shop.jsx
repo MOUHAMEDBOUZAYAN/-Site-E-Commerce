@@ -212,9 +212,12 @@ const Shop = () => {
                   <div className="p-4 flex-1">
                     <h2 className="text-lg font-semibold">{product.name}</h2>
                     <p className="text-gray-500 text-sm mb-2">{product.category}</p>
-                    <p className="line-clamp-2 text-gray-600 mb-4">{product.description}</p>
+                    <p className="line-clamp-2 text-gray-600 mb-4">{product.description || 'Aucune description disponible'}</p>
                     <div className="flex justify-between items-center">
                       <p className="text-xl font-bold" style={{color: activeColors.bg}}>${product.price}</p>
+                      {product.stock !== undefined && (
+                        <p className="text-sm font-medium text-gray-600">Stock: {product.stock}</p>
+                      )}
                       <Link 
                         to={`/product/${product._id}`} 
                         className={`text-white ${activeColors.bg} hover:opacity-90 py-2 px-4 rounded-md transition-colors duration-300`}

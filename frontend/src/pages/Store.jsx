@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Shop from "../Components/Shop";
 import ShopCategory from "../Components/ShopCategory";
 import ProductDetail from "../Components/ProductDetail";
-import Comments from "../components/Comments";
+import Comments from "../Components/Comments";
+
+
 
 
 

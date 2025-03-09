@@ -1,110 +1,170 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useFormik } from 'formik'
-import { registerSchema } from '../schemas/registerSchema'
+import { useFormik } from "formik";
+import { registerSchema } from "../schemas/registerSchema";
 import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
-
   const [message, setMessage] = useState("");
 
-  const onSubmit = async (values) => {
-    await handleRegister();
-  }
+  const onSubmit = async (values, actions) => {
+    await handleRegister(values);
+    actions.resetForm();
+  };
 
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    isSubmitting,
+  } = useFormik({
     initialValues: {
       username: "",
       email: "",
+      isAdmin: false,
       password: "",
       confirmPassword: "",
     },
     validationSchema: registerSchema,
     onSubmit,
-  })
+  });
 
-
-  const handleRegister = async () => {
+  const handleRegister = async (values) => {
     try {
-    
-      const res = await axios.post("http://localhost:9000/api/users/register", { username: values.username, email: values.email, password: values.password });
+      const res = await axios.post("http://localhost:9000/api/users/register", {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        isAdmin: values.isAdmin,
+      });
 
-      if (res.email) {
-        setMessage("user already exist")
-        return
-      }
-
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token);
-        setMessage("Logged In ...");
-        // setTimeout(() => {
-        //   navigate("/Csoon");
-        // }, 2000);
-      } else {
-        setMessage(
-          res.data.message || "Login failed! Check your email and password."
-        );
-      }
-    } catch (error) {
-      setMessage("Login failed!");
+      setMessage("Regsitering ...");
+      setTimeout(() => {
+        console.log(res.data.isAdmin);
+        if (res.data.isAdmin) {
+          // navigate("/Admin");
+          console.log("this is admin page");
+        } else {
+          // navigate("/Store");
+          console.log("this is store page");
+        }
+        setMessage("");
+      }, 2000);
+    } catch (err) {
+        if (err.response && err.response.status === 404) {
+            setMessage("Email is already in use. Please try a different one.");
+        } else {
+            setMessage("Registration failed! Please try again.");
+        }
     }
   };
 
   return (
     <>
-          <form onSubmit={handleSubmit} autoComplete="off">
+      <form onSubmit={handleSubmit} autoComplete="off">
+        <h2 className="text-2xl text-blue-500 mb-4">Register</h2>
 
-            <h2 className="text-2xl text-blue-500 mb-4">
-              Register
-            </h2>
-            
-            <input
-              type="text"
-              name="username"
-              placeholder="Full Name"
-              value={values.username}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={errors.username && touched.username ? "input-error border-2 rounded-2xl p-2 mb-2 w-full" : "border-2 rounded-2xl p-2 mb-2 w-full"}
-            />
-            
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={values.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={errors.email && touched.email ? "input-error border-2 rounded-2xl p-2 mb-2 w-full" : "border-2 rounded-2xl p-2 mb-2 w-full"}
-              />
+        <input
+          type="text"
+          name="username"
+          placeholder="Full Name"
+          value={values.username}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={
+            errors.username && touched.username
+              ? "input-error border-2 rounded-2xl p-2 mb-1 w-full"
+              : "border-2 rounded-2xl p-2 mb-1 w-full"
+          }
+        />
+        {errors.username && touched.username && (
+          <p className="text-xs mb-1 text-red-500">{errors.username}</p>
+        )}
 
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={values.password}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={errors.password && touched.password ? "input-error border-2 rounded-2xl p-2 mb-2 w-full" : "border-2 rounded-2xl p-2 mb-2 w-full"}
-              />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={
+            errors.email && touched.email
+              ? "input-error border-2 rounded-2xl p-2 mb-1 w-full"
+              : "border-2 rounded-2xl p-2 mb-1 w-full"
+          }
+        />
+        {errors.email && touched.email && (
+          <p className="text-xs mb-1 text-red-500">{errors.email}</p>
+        )}
 
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="confirm password"
-              value={values.confirmPassword}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={errors.confirmPassword && touched.confirmPassword ? "input-error border-2 rounded-2xl p-2 mb-2 w-full" : "border-2 rounded-2xl p-2 mb-2 w-full"}
-            />
+        <select
+          name="isAdmin"
+          placeholder="select your role"
+          value={values.isAdmin}
+          onChange={(e) => handleChange({ 
+            target: { name: "isAdmin", value: e.target.value === "true" } 
+          })}
+          className={
+            errors.email && touched.email
+              ? "input-error border-2 rounded-2xl p-2 mb-1 w-full"
+              : "border-2 rounded-2xl p-2 mb-1 w-full"
+          }
+        >
+          <option value="false">User</option>
+          <option value="true">Admin</option>
+        </select>
+        {errors.isAdmin && touched.isAdmin && (
+          <p className="text-xs mb-1 text-red-500">{errors.isAdmin}</p>
+        )}
 
-            <button className="primary-btn w-full" type="submit">
-              Register
-            </button>
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={values.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={
+            errors.password && touched.password
+              ? "input-error border-2 rounded-2xl p-2 mb-1 w-full"
+              : "border-2 rounded-2xl p-2 mb-1 w-full"
+          }
+        />
+        {errors.password && touched.password && (
+          <p className="text-xs mb-1 text-red-500">{errors.password}</p>
+        )}
 
-            <p className="text-amber-500 mt-2 text-center">{message}</p>
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="confirm password"
+          value={values.confirmPassword}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={
+            errors.confirmPassword && touched.confirmPassword
+              ? "input-error border-2 rounded-2xl p-2 mb-1 w-full"
+              : "border-2 rounded-2xl p-2 mb-1 w-full"
+          }
+        />
+        {errors.confirmPassword && touched.confirmPassword && (
+          <p className="text-xs mb-1 text-red-500">{errors.confirmPassword}</p>
+        )}
 
-          </form>
+        <button
+          disabled={isSubmitting}
+          className="primary-btn w-full disabled:opacity-30"
+          type="submit"
+        >
+          Register
+        </button>
+
+        <p className="text-blue-500 mt-2 text-center">{message}</p>
+      </form>
     </>
   );
 }

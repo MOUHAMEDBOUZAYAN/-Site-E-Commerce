@@ -5,8 +5,8 @@ import Connect from "./pages/Connect";
 
 function App() {
   return (
-    // <Store />
-    <Connect />
+    <Store />
+    // <Connect />
   );
 }
 

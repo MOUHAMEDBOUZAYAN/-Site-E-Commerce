@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const onSubmit = async (values, actions) => {
-    await handleRegister(values);
-    actions.resetForm();
+    await handleRegister(values ,()=>{actions.resetForm();});
   };
 
   const {
@@ -40,19 +40,21 @@ function RegisterPage() {
         password: values.password,
         isAdmin: values.isAdmin,
       });
+      console.log(res)
 
       setMessage("Regsitering ...");
       setTimeout(() => {
         console.log(res.data.isAdmin);
         if (res.data.isAdmin) {
-          // navigate("/Admin");
+          navigate("/AdminPage");
           console.log("this is admin page");
         } else {
-          // navigate("/Store");
+          navigate("/Store");
           console.log("this is store page");
         }
         setMessage("");
       }, 2000);
+
     } catch (err) {
         if (err.response && err.response.status === 404) {
             setMessage("Email is already in use. Please try a different one.");

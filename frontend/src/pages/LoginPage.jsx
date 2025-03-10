@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 function LoginPage() {
 
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const onSubmit = async (values, action) => {
     await handleLogin(values, ()=>{action.resetForm();});
@@ -34,10 +35,10 @@ function LoginPage() {
         setTimeout(() => {
           console.log(res.data.user.isAdmin);
           if (res.data.user.isAdmin) {
-            // navigate("/Admin");
+            navigate("/AdminPage");
             console.log("this is admin page");
           } else {
-            // navigate("/Store");
+            navigate("/Store");
             console.log("this is store page");
           }
           setMessage("");

@@ -7,7 +7,7 @@ const ProductReviews = ({ productId, refresh }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:4444/api/Comments?productId=${productId}`);
+        const response = await axios.get(`http://localhost:9000/api/comments?productId=${productId}`);
         setReviews(response.data);
       } catch (error) {
         console.error("Erreur lors du chargement des commentaires", error);

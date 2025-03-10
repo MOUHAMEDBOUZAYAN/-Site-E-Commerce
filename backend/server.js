@@ -11,7 +11,7 @@ const PORT = 9000
 const MONGO_URI = process.env.MONGO_URL;
 
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 mongoose.connect(MONGO_URI)
@@ -23,5 +23,5 @@ app.use("/api/products", productRoutes)
 app.use("/api/comments", commentRoutes)
 
 app.listen(PORT, () => {
-    console.log(`server running on port ${PORT}`)
+    console.log(`server running on port ${PORT}`);
 })

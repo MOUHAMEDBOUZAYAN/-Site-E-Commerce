@@ -17,11 +17,10 @@ const Comments = ({ productId, onCommentAdded }) => {
     }),
     onSubmit: async (values, { resetForm }) => {
       try {
-        await axios.post('http://localhost:4444/api/Comments', {
+        await axios.post('http://localhost:9000/api/comments', {
           productId,
           name: values.name,
           comment: values.comment,
-          userId: 'userIdHere',
         });
         setMessage('Commentaire ajouté avec succès !');
         resetForm();

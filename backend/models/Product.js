@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, "La catégorie est obligatoire"],
     enum: {
-      values: ["Électronique", "Mode", "Maison", "Beauté", "Sport"],
+      values: ['women', 'sport', 'home', 'electronics'],
       message: "Catégorie invalide"
     }
   },

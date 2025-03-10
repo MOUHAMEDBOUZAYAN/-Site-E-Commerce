@@ -8,8 +8,9 @@ function LoginPage() {
 
   const [message, setMessage] = useState("");
 
-  const onSubmit = async (values) => {
-    await handleLogin();
+  const onSubmit = async (values, action) => {
+    await handleLogin(values);
+    action.resetForm();
   }
 
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
@@ -26,18 +27,23 @@ function LoginPage() {
     try {
       
       const res = await axios.post("http://localhost:9000/api/users/login", { email: values.email, password: values.password });
-
-      if (res.email) {
-        setMessage("user already exist")
-        return
-      }
-
+      console.log(res)
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         setMessage("Logged In ...");
-        // setTimeout(() => {
-        //   navigate("/Csoon");
-        // }, 2000);
+        
+        setTimeout(() => {
+          console.log(res.data.isAdmin);
+          if (res.data.isAdmin) {
+            // navigate("/Admin");
+            console.log("this is admin page");
+          } else {
+            // navigate("/Store");
+            console.log("this is store page");
+          }
+          setMessage("");
+        }, 2000);
+
       } else {
         setMessage(
           res.data.message || "Login failed! Check your email and password."
@@ -63,8 +69,11 @@ function LoginPage() {
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
-              className={errors.email && touched.email ? "input-error border-2 rounded-2xl p-2 mb-2 w-full" : "border-2 rounded-2xl p-2 mb-2 w-full"}
+              className={errors.email && touched.email ? "input-error border-2 rounded-2xl p-2 mb-1 w-full" : "border-2 rounded-2xl p-2 mb-1 w-full"}
               />
+              {errors.email && touched.email && (
+                <p className="text-xs mb-1 text-red-500">{errors.email}</p>
+              )}
 
             <input
               type="password"
@@ -73,8 +82,11 @@ function LoginPage() {
               value={values.password}
               onChange={handleChange}
               onBlur={handleBlur}
-              className={errors.password && touched.password ? "input-error border-2 rounded-2xl p-2 mb-2 w-full" : "border-2 rounded-2xl p-2 mb-2 w-full"}
+              className={errors.password && touched.password ? "input-error border-2 rounded-2xl p-2 mb-1 w-full" : "border-2 rounded-2xl p-2 mb-1 w-full"}
               />
+              {errors.password && touched.password && (
+                <p className="text-xs mb-1 text-red-500">{errors.password}</p>
+              )}
 
             <button className="sec-btn w-full" type="submit">
               Login

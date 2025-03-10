@@ -7,20 +7,21 @@ require('dotenv').config();
 
 router.post('/register', async (req, res) => {
 
-    const { username, email, password } = req.body
+    const { username, email, password, isAdmin } = req.body
 
     try {
         const user = await User.findOne({email})
         
         if (user) {
-            return res.status(404).json({ message: "User already exists" })
+            res.status(404).json("Email already used")
+            return 
         }
         
         const hashPass = await bcrybt.hash(password, 10)
-        const newUser = new User({username, email, password: hashPass})
+        const newUser = new User({username, email, password: hashPass, isAdmin})
 
         await newUser.save()
-        res.status(201).json({message: "User registered successfully"});
+        res.status(201).json(newUser);
     } catch (error) {
         res.status(500).json({error: 'Error registering user'})
     }
@@ -36,7 +37,7 @@ router.post('/login', async (req, res) => {
         }
         const isMatched = await bcrybt.compare(password, user.password)
         if (!isMatched) {
-            res.status(400).json({ message: "Invalid credentials" })
+            res.status(400).json({ message: "incorrect password" })
             return
         }
         const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h'})

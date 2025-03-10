@@ -1,184 +1,165 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
-const ProductForm = ({ product = null, apiUrl = "http://127.0.0.1:9000/api/products" }) => {
-    const [name, setName] = useState(product ? product.name : '');
-    const [price, setPrice] = useState(product ? product.price : '');
-    const [description, setDescription] = useState(product ? product.description : '');
-    const [category, setCategory] = useState(product ? product.category : '');
-    const [stock, setStock] = useState(product ? product.stock : '');
-    const [image, setImage] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
+const ProductManager = ({ apiUrl = "http://127.0.0.1:9000/api/products" }) => {
+    const [products, setProducts] = useState([]);
+    const [loadingProducts, setLoadingProducts] = useState(true);
+    const [fetchError, setFetchError] = useState(null);
+    
+    const categories = ['women', 'sport', 'home', 'electronics'];
 
-    const categories = ['Electronics', 'Fashion', 'Home', 'Beauty', 'Sports'];
-
-    const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get(apiUrl);
+            setProducts(response.data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError('Failed to fetch products.');
+        } finally {
+            setLoadingProducts(false);
+        }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
-        // Reset error and success state
-        setError(null);
-        setSuccess(false);
-
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('price', price);
-        formData.append('description', description);
-        formData.append('category', category);
-        formData.append('stock', stock);
-
-        if (image) {
-            formData.append('image', image);
-        }
-
-        try {
-            setLoading(true);
-
-            // Send POST request to the API
-            const response = await axios.post("http://127.0.0.1:9000/api/products", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            if (response.status === 201) {
-                setSuccess(true); // Show success message
-                // Reset form fields
-                setName('');
-                setPrice('');
-                setDescription('');
-                setCategory('');
-                setStock('');
-                setImage(null);
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            price: '',
+            description: '',
+            category: '',
+            stock: '',
+            image: null,
+        },
+        validationSchema: Yup.object({
+            name: Yup.string().required('Product name is required'),
+            price: Yup.number().required('Price is required').positive('Price must be positive'),
+            description: Yup.string().required('Description is required'),
+            category: Yup.string().required('Category is required'),
+            stock: Yup.number().required('Stock is required').integer('Stock must be an integer').positive('Stock must be positive'),
+        }),
+        onSubmit: async (values, { setSubmitting, resetForm }) => {
+            const formData = new FormData();
+            formData.append('name', values.name);
+            formData.append('price', values.price);
+            formData.append('description', values.description);
+            formData.append('category', values.category);
+            formData.append('stock', values.stock);
+            if (values.image) {
+                formData.append('image', values.image);
             }
-        } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Failed to submit the product.';
-            setError(errorMessage);
-        } finally {
-            setLoading(false);
-        }
+
+            try {
+                const response = await axios.post(apiUrl, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                if (response.status === 201) {
+                    resetForm();
+                    fetchProducts(); // Refresh list
+                }
+            } catch (error) {
+                console.error("Error during submission:", error.response?.data || error.message);
+            } finally {
+                setSubmitting(false);
+            }
+        },
+    });
+
+    const handleImageChange = (e) => {
+        formik.setFieldValue('image', e.currentTarget.files[0]);
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#E3D5CA] to-[#F5EBE0] p-6">
-            <form
-                onSubmit={handleSubmit}
-                className="bg-[#D5BDAF] p-6 rounded-lg w-full max-w-2xl shadow-lg text-white"
-            >
-                <h2 className="text-2xl font-semibold text-center text-black mb-6">
-                    {product ? 'Edit Product' : 'Add a New Product'}
-                </h2>
-
-                {success && (
-                    <div className="mb-4 p-3 bg-green-100 text-green-800 text-sm rounded">
-                        Product submitted successfully!
-                    </div>
-                )}
-                {error && (
-                    <div className="mb-4 p-3 bg-red-100 text-red-800 text-sm rounded">
-                        {error}
-                    </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-black mb-1">Product Name</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full p-2 rounded bg-[#F5EBE0] text-black border border-[#D5BDAF]"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-black mb-1">Price</label>
-                        <input
-                            type="number"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            className="w-full p-2 rounded bg-[#F5EBE0] text-black border border-[#D5BDAF]"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-black mb-1">Category</label>
-                        <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="w-full p-2 rounded bg-[#F5EBE0] text-black border border-[#D5BDAF]"
-                            required
-                        >
-                            <option value="">Select a category</option>
-                            {categories.map((cat) => (
-                                <option key={cat} value={cat}>
-                                    {cat}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-black mb-1">Stock</label>
-                        <input
-                            type="number"
-                            value={stock}
-                            onChange={(e) => setStock(e.target.value)}
-                            className="w-full p-2 rounded bg-[#F5EBE0] text-black border border-[#D5BDAF]"
-                            required
-                        />
-                    </div>
-                </div>
-
-                <div className="mt-4">
-                    <label className="block text-sm font-medium text-black mb-1">Description</label>
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full p-2 rounded bg-[#F5EBE0] text-black border border-[#D5BDAF]"
-                        required
-                    />
-                </div>
-
-                <div className="mt-4">
-                    <label className="block text-sm font-medium text-black mb-1">Select Image</label>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                        id="imageInput"
-                    />
-                    <button
-                        type="button"
-                        onClick={() => document.getElementById('imageInput').click()}
-                        className="w-full p-2 bg-[#D5BDAF] text-white font-semibold rounded hover:bg-black"
-                    >
-                        {image ? 'Change Image' : 'Select Image'}
-                    </button>
-                    {image && (
-                        <div className="mt-2 text-sm text-black">
-                            Selected File: <strong>{image.name}</strong>
+        <div className="p-6 grid grid-cols-2 gap-6 min-h-screen">
+            {/* Add Product Form */}
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-semibold mb-6">Add a New Product</h2>
+                <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label>Product Name</label>
+                            <input type="text" name="name" {...formik.getFieldProps('name')} className="w-full p-2 border rounded" />
+                            {formik.touched.name && formik.errors.name && <div className="text-red-500 text-sm">{formik.errors.name}</div>}
                         </div>
-                    )}
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className={`w-full mt-6 p-3 font-semibold rounded ${
-                        loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#D5BDAF] hover:bg-black text-white'
-                    }`}
-                >
-                    {loading ? 'Submitting...' : 'Add Product'}
-                </button>
-            </form>
+                        <div>
+                            <label>Price</label>
+                            <input type="number" name="price" {...formik.getFieldProps('price')} className="w-full p-2 border rounded" />
+                            {formik.touched.price && formik.errors.price && <div className="text-red-500 text-sm">{formik.errors.price}</div>}
+                        </div>
+                        <div>
+                            <label>Category</label>
+                            <select name="category" {...formik.getFieldProps('category')} className="w-full p-2 border rounded">
+                                <option value="">Select a category</option>
+                                {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                            </select>
+                            {formik.touched.category && formik.errors.category && <div className="text-red-500 text-sm">{formik.errors.category}</div>}
+                        </div>
+                        <div>
+                            <label>Stock</label>
+                            <input type="number" name="stock" {...formik.getFieldProps('stock')} className="w-full p-2 border rounded" />
+                            {formik.touched.stock && formik.errors.stock && <div className="text-red-500 text-sm">{formik.errors.stock}</div>}
+                        </div>
+                    </div>
+                    <div className="mt-4">
+                        <label>Description</label>
+                        <textarea name="description" {...formik.getFieldProps('description')} className="w-full p-2 border rounded" />
+                        {formik.touched.description && formik.errors.description && <div className="text-red-500 text-sm">{formik.errors.description}</div>}
+                    </div>
+                    <div className="mt-4">
+                        <label>Select Image</label>
+                        <input type="file" accept="image/*" onChange={handleImageChange} className="w-full p-2 border rounded" />
+                    </div>
+                    <button type="submit" disabled={formik.isSubmitting} className="mt-4 bg-blue-500 text-white p-2 rounded w-full">
+                        {formik.isSubmitting ? 'Submitting...' : 'Add Product'}
+                    </button>
+                </form>
+            </div>
+            
+            {/* Product List Table */}
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-semibold mb-6">Product List</h2>
+                {loadingProducts ? (
+                    <p>Loading products...</p>
+                ) : fetchError ? (
+                    <p className="text-red-500">{fetchError}</p>
+                ) : (
+                    <table className="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="border p-2">Name</th>
+                                <th className="border p-2">Price</th>
+                                <th className="border p-2">Category</th>
+                                <th className="border p-2">Stock</th>
+                                <th className="border p-2">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {products.length > 0 ? products.map((product) => (
+                                <tr key={product.id} className="border">
+                                    <td className="border p-2">{product.name}</td>
+                                    <td className="border p-2">${product.price}</td>
+                                    <td className="border p-2">{product.category}</td>
+                                    <td className="border p-2">{product.stock}</td>
+                                    <td className="border p-2">{product.description}</td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan="5" className="text-center text-gray-500 p-4">No products available.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                )}
+            </div>
         </div>
     );
 };
 
-export default ProductForm;
+export default ProductManager;

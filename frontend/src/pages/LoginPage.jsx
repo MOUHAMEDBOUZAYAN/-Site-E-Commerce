@@ -9,8 +9,7 @@ function LoginPage() {
   const [message, setMessage] = useState("");
 
   const onSubmit = async (values, action) => {
-    await handleLogin(values);
-    action.resetForm();
+    await handleLogin(values, ()=>{action.resetForm();});
   }
 
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
@@ -27,14 +26,14 @@ function LoginPage() {
     try {
       
       const res = await axios.post("http://localhost:9000/api/users/login", { email: values.email, password: values.password });
-      console.log(res)
+
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         setMessage("Logged In ...");
         
         setTimeout(() => {
-          console.log(res.data.isAdmin);
-          if (res.data.isAdmin) {
+          console.log(res.data.user.isAdmin);
+          if (res.data.user.isAdmin) {
             // navigate("/Admin");
             console.log("this is admin page");
           } else {
@@ -49,8 +48,12 @@ function LoginPage() {
           res.data.message || "Login failed! Check your email and password."
         );
       }
-    } catch (error) {
-      setMessage("Login failed!");
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setMessage("Incorrect password!");
+      } else {
+        setMessage("Registration failed! Please try again.");
+    }
     }
   };
 

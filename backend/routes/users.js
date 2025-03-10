@@ -41,7 +41,7 @@ router.post('/login', async (req, res) => {
             return
         }
         const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h'})
-        res.json({ token })
+        res.json({ token , user })
     } catch (error) {
         res.status(500).json({error: 'Error logging in'})
     }

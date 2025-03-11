@@ -14,7 +14,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Connect />} />
           <Route path='/AdminPage' element={<AdminPage />} />
-          <Route path='/Store' element={<Store />} />
+          <Route path='/Store/*' element={<Store />} />
         </Routes>
       </Router>
 

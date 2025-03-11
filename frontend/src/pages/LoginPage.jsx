@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useFormik } from 'formik'
 import { loginSchema } from "../schemas/loginSchema";
@@ -8,6 +8,14 @@ function LoginPage() {
 
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
+  const [data, setData] = useState(
+      JSON.parse(sessionStorage.getItem("profile1")) || {}
+    );
+  
+    useEffect(() => {
+      sessionStorage.setItem("profile1", JSON.stringify(data));
+    }, [data]);
 
   const onSubmit = async (values, action) => {
     await handleLogin(values, ()=>{action.resetForm();});
@@ -31,9 +39,11 @@ function LoginPage() {
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         setMessage("Logged In ...");
+
+        setData(res.data.user)
         
         setTimeout(() => {
-          console.log(res.data.user.isAdmin);
+          console.log(data);
           if (res.data.user.isAdmin) {
             navigate("/AdminPage");
             console.log("this is admin page");

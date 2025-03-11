@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useFormik } from "formik";
 import { registerSchema } from "../schemas/registerSchema";
@@ -7,9 +7,18 @@ import { useNavigate } from "react-router-dom";
 function RegisterPage() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  
+  const [data, setData] = useState(
+    JSON.parse(sessionStorage.getItem("profile")) || {}
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem("profile", JSON.stringify(data));
+  }, [data]);
 
   const onSubmit = async (values, actions) => {
     await handleRegister(values ,()=>{actions.resetForm();});
+
   };
 
   const {
@@ -40,9 +49,10 @@ function RegisterPage() {
         password: values.password,
         isAdmin: values.isAdmin,
       });
-      console.log(res)
 
-      setMessage("Regsitering ...");
+      setData(res.data)
+
+      setMessage("Registering ...");
       setTimeout(() => {
         console.log(res.data.isAdmin);
         if (res.data.isAdmin) {

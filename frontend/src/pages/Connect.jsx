@@ -4,6 +4,7 @@ import RegisterPage from './RegisterPage'
 
 function Connect() {
     const[isRegistering, setIsRegistering] = useState(false)
+
   return (
     <>
     <div className="flex flex-col items-center justify-center min-h-screen ">

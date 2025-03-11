@@ -5,13 +5,8 @@ import ShopCategory from "../Components/ShopCategory";
 import ProductDetail from "../Components/ProductDetail";
 import Comments from "../Components/Comments";
 
-
-
-
-
 function Store() {
   return (
-    <Router>
       <div className="container mx-auto">
         <Routes>
           <Route path="/" element={<Shop />} />
@@ -20,7 +15,6 @@ function Store() {
           <Route path="/comments/:productId" element={<Comments />} />
         </Routes>
       </div>
-    </Router>
   );
 }
 

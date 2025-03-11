@@ -12,8 +12,8 @@ const Comments = ({ productId, onCommentAdded }) => {
       comment: '',
     },
     validationSchema: Yup.object({
-      name: Yup.string().min(1).max(100).required('Le nom est obligatoire'),
-      comment: Yup.string().min(1).max(500).required('Le commentaire est obligatoire'),
+      name: Yup.string().min(1).max(100).required('Le nom obligatoire'),
+      comment: Yup.string().min(1).max(500).required('Le commentaire obligatoire'),
     }),
     onSubmit: async (values, { resetForm }) => {
       try {

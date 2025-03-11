@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useFormik } from 'formik'
 import { loginSchema } from "../schemas/loginSchema";
@@ -7,10 +7,18 @@ import { useNavigate } from "react-router-dom";
 function LoginPage() {
 
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const [data, setData] = useState(
+      JSON.parse(sessionStorage.getItem("profile1")) || {}
+    );
+  
+    useEffect(() => {
+      sessionStorage.setItem("profile1", JSON.stringify(data));
+    }, [data]);
 
   const onSubmit = async (values, action) => {
-    await handleLogin(values);
-    action.resetForm();
+    await handleLogin(values, ()=>{action.resetForm();});
   }
 
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
@@ -27,18 +35,20 @@ function LoginPage() {
     try {
       
       const res = await axios.post("http://localhost:9000/api/users/login", { email: values.email, password: values.password });
-      console.log(res)
+
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         setMessage("Logged In ...");
+
+        setData(res.data.user)
         
         setTimeout(() => {
-          console.log(res.data.isAdmin);
-          if (res.data.isAdmin) {
-            // navigate("/Admin");
+          console.log(data);
+          if (res.data.user.isAdmin) {
+            navigate("/AdminPage");
             console.log("this is admin page");
           } else {
-            // navigate("/Store");
+            navigate("/Store");
             console.log("this is store page");
           }
           setMessage("");
@@ -49,8 +59,12 @@ function LoginPage() {
           res.data.message || "Login failed! Check your email and password."
         );
       }
-    } catch (error) {
-      setMessage("Login failed!");
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setMessage("Incorrect password!");
+      } else {
+        setMessage("Registration failed! Please try again.");
+    }
     }
   };
 

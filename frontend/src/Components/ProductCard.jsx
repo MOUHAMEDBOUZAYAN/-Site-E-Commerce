@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const ProductCard = ({ product, activeColor }) => {
+  const [imageError, setImageError] = useState(false);
+
   if (!product || !product._id || !product.name) {
     console.error("ProductCard: données de produit invalides", product);
     return null;
@@ -10,15 +12,21 @@ const ProductCard = ({ product, activeColor }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
       <div className="relative">
-        <img 
-          src={product.image || "https://via.placeholder.com/300x200?text=No+Image"} 
-          alt={product.name} 
-          className="w-full h-56 object-cover"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "https://via.placeholder.com/300x200?text=Error";
-          }}
-        />
+        {imageError ? (
+          <div className="w-full h-56 flex items-center justify-center bg-gray-200">
+            <span className="text-gray-500">Image non disponible</span>
+          </div>
+        ) : (
+          <img
+            src={`http://localhost:9000/uploads/${product.image}`}
+            alt={product.name}
+            className="w-full h-56 object-cover"
+            onError={() => {
+              setImageError(true);
+              console.error(`Erreur de chargement de l'image: ${product.image}`);
+            }}
+          />
+        )}
         <div className="absolute top-3 right-3 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">
           ${product.price}
         </div>
@@ -36,11 +44,10 @@ const ProductCard = ({ product, activeColor }) => {
           </span>
         </div>
         <div className="mt-4">
-          <Link 
-            to={`/product/${product._id}`} 
-            className={`block w-full text-center text-white py-2 rounded-lg transition-colors duration-300 font-medium ${
-              activeColor ? '' : 'bg-emerald-600 hover:bg-emerald-700'
-            }`}
+          <Link
+            to={`/Store/product/${product._id}`}
+            className={`block w-full text-center text-white py-2 rounded-lg transition-colors duration-300 font-medium ${activeColor ? '' : 'bg-emerald-600 hover:bg-emerald-700'
+              }`}
             style={activeColor ? { backgroundColor: activeColor } : {}}
           >
             Voir détails

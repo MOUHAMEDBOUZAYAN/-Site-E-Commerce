@@ -8,6 +8,7 @@ const ProductDetail = () => {
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   // Charger le produit sélectionné
   useEffect(() => {
@@ -16,7 +17,8 @@ const ProductDetail = () => {
 
     axios.get(`http://localhost:9000/api/products/${productId}`)
       .then(response => {
-        setProduct(response.data);
+        console.log("Image path:", response.data.data.image); 
+        setProduct(response.data.data);
       })
       .catch(() => {
         setError(true);
@@ -64,15 +66,21 @@ const ProductDetail = () => {
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="bg-gray-100 p-6">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-contain rounded-xl"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "https://via.placeholder.com/600x400?text=Image+Non+Disponible";
-              }}
-            />
+            {imageError ? (
+              <div className="w-full h-56 flex items-center justify-center bg-gray-200">
+                <span className="text-gray-500">Image non disponible</span>
+              </div>
+            ) : (
+              <img 
+                src={`http://localhost:9000/uploads/${product.image}`}  
+                alt={product.name} 
+                className="w-full h-56 object-cover"
+                onError={() => {
+                  setImageError(true);
+                  console.error(`Erreur de chargement de l'image: ${product.image}`);
+                }}
+              />
+            )}
           </div>
           <div className="p-8">
             <span className="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-medium mb-4">
@@ -88,7 +96,7 @@ const ProductDetail = () => {
             
             <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0">
               <Link 
-                to={`/comments/${productId}`} 
+                to={`/Store/comments/${productId}`} 
                 className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-medium transition-colors flex items-center justify-center"
               >
                  Voir les avis
